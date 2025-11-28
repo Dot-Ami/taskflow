@@ -25,16 +25,37 @@ type FormData = z.infer<typeof userRegisterSchema>;
 
 export function RegisterForm() {
     const router = useRouter();
+    const [passwordStrength, setPasswordStrength] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const calculateStrength = (password: string) => {
+        let strength = 0;
+        if (password.length > 5) strength += 20;
+        if (password.length > 7) strength += 20;
+        if (/[A-Z]/.test(password)) strength += 20;
+        if (/[0-9]/.test(password)) strength += 20;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+        return strength;
+    };
 
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm<FormData>({
         resolver: zodResolver(userRegisterSchema),
     });
+
+    const password = watch("password", "");
+
+    // Update strength when password changes
+    if (password && calculateStrength(password) !== passwordStrength) {
+        setPasswordStrength(calculateStrength(password));
+    } else if (!password && passwordStrength !== 0) {
+        setPasswordStrength(0);
+    }
 
     const onSubmit = async (data: FormData) => {
         setIsLoading(true);
@@ -49,8 +70,12 @@ export function RegisterForm() {
                 body: JSON.stringify(data),
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                const result = await response.json();
+                if (response.status === 409) {
+                    throw new Error("This email is already registered. Please login instead.");
+                }
                 throw new Error(result.message || "Something went wrong");
             }
 
@@ -66,6 +91,14 @@ export function RegisterForm() {
         }
     };
 
+    const getStrengthColor = (strength: number) => {
+        if (strength <= 20) return "bg-red-500";
+        if (strength <= 40) return "bg-orange-500";
+        if (strength <= 60) return "bg-yellow-500";
+        if (strength <= 80) return "bg-blue-500";
+        return "bg-green-500";
+    };
+
     return (
         <Card className="w-[350px]">
             <CardHeader>
@@ -77,6 +110,12 @@ export function RegisterForm() {
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid w-full items-center gap-4">
+                        {error && (
+                            <div className="p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive bg-destructive/15">
+                                <AlertCircle className="h-4 w-4" />
+                                <p>{error}</p>
+                            </div>
+                        )}
                         <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="name">Name</Label>
                             <Input
@@ -110,6 +149,16 @@ export function RegisterForm() {
                                 {...register("password")}
                                 disabled={isLoading}
                             />
+                            {password && (
+                                <div className="w-full h-2 bg-secondary rounded-full mt-2 overflow-hidden">
+                                    <div
+                                        className={`h-full transition-all duration-300 ${getStrengthColor(
+                                            passwordStrength
+                                        )}`}
+                                        style={{ width: `${passwordStrength}%` }}
+                                    />
+                                </div>
+                            )}
                             {errors.password && (
                                 <p className="text-sm text-red-500">{errors.password.message}</p>
                             )}

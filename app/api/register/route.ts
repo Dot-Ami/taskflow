@@ -1,3 +1,5 @@
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 import { db } from "@/lib/db";
 import { userRegisterSchema } from "@/lib/validation/auth";
 import { hash } from "bcryptjs";
@@ -34,8 +36,11 @@ export async function POST(req: Request) {
 
         const { password_hash: newUserPassword, ...rest } = newUser;
 
+        const verificationToken = await generateVerificationToken(email);
+        await sendVerificationEmail(verificationToken.email, verificationToken.token);
+
         return NextResponse.json(
-            { user: rest, message: "User created successfully" },
+            { user: rest, message: "Confirmation email sent" },
             { status: 201 }
         );
     } catch (error) {
