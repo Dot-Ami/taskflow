@@ -10,7 +10,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Settings, User, BarChart } from "lucide-react";
+import Link from "next/link";
 
 export function UserMenu() {
     const { data: session } = useSession();
@@ -42,9 +43,22 @@ export function UserMenu() {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
+                <DropdownMenuItem asChild>
+                    <Link href="/settings" className="w-full flex items-center cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Settings
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/analytics" className="w-full flex items-center cursor-pointer">
+                        <BarChart className="mr-2 h-4 w-4" />
+                        Analytics
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    Log out
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

@@ -70,7 +70,16 @@ export function RegisterForm() {
                 body: JSON.stringify(data),
             });
 
-            const result = await response.json();
+            let result;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                result = await response.json();
+            } else {
+                // If not JSON, it's likely a server error page (HTML)
+                const text = await response.text();
+                console.error("Non-JSON response:", text);
+                throw new Error("Server error. Please try again later.");
+            }
 
             if (!response.ok) {
                 if (response.status === 409) {

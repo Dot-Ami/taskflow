@@ -8,6 +8,7 @@ export const createTaskSchema = z.object({
     status: z.enum(["todo", "in_progress", "done"]).optional(),
     priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
     due_date: z.string().optional().nullable(), // Expecting ISO string from frontend
+    category_id: z.string().optional().nullable(),
 });
 
 export const updateTaskSchema = z.object({
@@ -18,4 +19,5 @@ export const updateTaskSchema = z.object({
     status: z.enum(["todo", "in_progress", "done"]).optional(),
     priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
     due_date: z.string().optional().nullable(),
+    category_id: z.string().optional().nullable(),
 });

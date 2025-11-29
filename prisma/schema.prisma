@@ -19,6 +19,7 @@ model User {
   emailVerified DateTime?
   accounts      Account[]
   tasks         Task[]
+  categories    Category[]
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
 
@@ -57,9 +58,25 @@ model Task {
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
 
+  category_id  String?
+  category     Category?    @relation(fields: [category_id], references: [id])
+
   @@index([user_id])
   @@index([status])
   @@index([due_date])
+  @@index([category_id])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  color       String   @default("blue")
+  user_id     String
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tasks       Task[]
+  created_at  DateTime @default(now())
+
+  @@unique([user_id, name])
 }
 
 enum TaskStatus {

@@ -7,6 +7,8 @@ import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
 import { TaskFilters } from "@/components/tasks/TaskFilters";
 import { TaskSearch } from "@/components/tasks/TaskSearch";
 import { UserMenu } from "@/components/layout/UserMenu";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { CategoryManager } from "@/components/categories/CategoryManager";
 import { Task } from "@/types";
 
 interface DashboardProps {
@@ -14,6 +16,8 @@ interface DashboardProps {
         status?: string;
         priority?: string;
         search?: string;
+        category?: string;
+        sort?: string;
     };
 }
 
@@ -40,11 +44,41 @@ async function getTasks(
         ];
     }
 
+    if (params.category && params.category !== "all") {
+        whereClause.category_id = params.category;
+    }
+
+    let orderBy: any = { created_at: "desc" };
+
+    if (params.sort) {
+        switch (params.sort) {
+            case "created_asc":
+                orderBy = { created_at: "asc" };
+                break;
+            case "created_desc":
+                orderBy = { created_at: "desc" };
+                break;
+            case "priority_asc":
+                orderBy = { priority: "asc" };
+                break;
+            case "priority_desc":
+                orderBy = { priority: "desc" };
+                break;
+            case "due_date_asc":
+                orderBy = { due_date: "asc" };
+                break;
+            case "due_date_desc":
+                orderBy = { due_date: "desc" };
+                break;
+        }
+    }
+
     const tasks = await db.task.findMany({
         where: whereClause,
-        orderBy: {
-            created_at: "desc",
+        include: {
+            category: true,
         },
+        orderBy: orderBy,
     });
 
     return tasks.map((task) => ({
@@ -77,6 +111,8 @@ export default async function DashboardPage({ searchParams }: DashboardProps) {
                     </div>
                     <div className="flex items-center gap-2">
                         <CreateTaskDialog />
+                        <CategoryManager />
+                        <ThemeToggle />
                         <UserMenu />
                     </div>
                 </div>

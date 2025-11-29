@@ -49,6 +49,11 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
                             <Badge className={priorityColors[task.priority]}>
                                 {task.priority}
                             </Badge>
+                            {task.category && (
+                                <Badge variant="outline" style={{ borderColor: task.category.color, color: task.category.color }}>
+                                    {task.category.name}
+                                </Badge>
+                            )}
                         </div>
                     </div>
                 </div>

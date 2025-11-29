@@ -8,4 +8,10 @@ export interface Task {
     created_at: string;
     updated_at: string;
     user_id: string;
+    category_id?: string | null;
+    category?: {
+        id: string;
+        name: string;
+        color: string;
+    } | null;
 }

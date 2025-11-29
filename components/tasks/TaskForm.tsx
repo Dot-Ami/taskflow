@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { createTaskSchema } from "@/lib/validation/tasks";
+import { getCategories } from "@/actions/categories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,8 @@ interface TaskFormProps {
 }
 
 export function TaskForm({ task, onSubmit, isSubmitting }: TaskFormProps) {
+    const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+
     const {
         register,
         handleSubmit,
@@ -42,11 +45,21 @@ export function TaskForm({ task, onSubmit, isSubmitting }: TaskFormProps) {
             status: task?.status || "todo",
             priority: task?.priority || "medium",
             due_date: task?.due_date ? new Date(task.due_date).toISOString().split("T")[0] : "",
+            category_id: task?.category_id || "",
         },
     });
 
     const status = watch("status");
     const priority = watch("priority");
+    const category_id = watch("category_id");
+
+    useEffect(() => {
+        const loadCategories = async () => {
+            const data = await getCategories();
+            setCategories(data);
+        };
+        loadCategories();
+    }, []);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -110,6 +123,27 @@ export function TaskForm({ task, onSubmit, isSubmitting }: TaskFormProps) {
                         </SelectContent>
                     </Select>
                 </div>
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select
+                    disabled={isSubmitting}
+                    onValueChange={(value) => setValue("category_id", value === "none" ? null : value)}
+                    defaultValue={category_id || "none"}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="none">No Category</SelectItem>
+                        {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
 
             <div className="space-y-2">

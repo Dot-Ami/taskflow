@@ -4,7 +4,7 @@ A full-stack CRUD task management application built with Next.js 14, TypeScript,
 
 ## 🚀 Tech Stack
 
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Shadcn/ui
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Shadcn/ui, Recharts
 - **Backend**: Next.js API Routes, NextAuth.js, Prisma ORM
 - **Database**: PostgreSQL (Supabase)
 - **Validation**: Zod
@@ -15,8 +15,10 @@ A full-stack CRUD task management application built with Next.js 14, TypeScript,
 
 - 🔐 User authentication (register, login, logout)
 - ✅ Complete CRUD operations for tasks
+- 📂 **Task Categories**: Organize tasks into custom categories with colors
+- 📊 **Analytics Dashboard**: Visual insights with charts and statistics
 - 🎯 Task properties: title, description, status, priority, due date
-- 🔍 Filter tasks by status and priority
+- 🔍 Filter tasks by status, priority, and category
 - 🔎 Search tasks by title and description
 - 📱 Fully responsive design (mobile, tablet, desktop)
 - 🔒 Secure user data isolation
@@ -85,6 +87,7 @@ taskflow/
 ├── app/
 │   ├── (auth)/              # Authentication pages (login, register)
 │   ├── (dashboard)/         # Protected dashboard pages
+│   ├── analytics/           # Analytics dashboard
 │   ├── api/                 # API routes
 │   │   ├── auth/           # NextAuth endpoints
 │   │   └── tasks/          # Task CRUD endpoints
@@ -94,6 +97,8 @@ taskflow/
 ├── components/
 │   ├── ui/                 # Shadcn UI components
 │   ├── tasks/              # Task-specific components
+│   ├── categories/         # Category management components
+│   ├── analytics/          # Analytics components
 │   └── layout/             # Layout components
 ├── lib/
 │   ├── db/                 # Database queries
@@ -170,6 +175,8 @@ npx prisma db push             # Push schema changes (development)
 - [x] Day 7: Task CRUD Frontend ✅
 - [x] Day 8-9: Filters & Search ✅
 - [x] Day 10: Polish & Responsive Design ✅
+- [x] **Phase 2: Task Categories** ✅
+- [x] **Phase 3: Analytics Dashboard** ✅
 - [ ] Day 11: Testing
 - [ ] Day 12-13: Deployment
 - [ ] Day 14: Documentation
